@@ -183,9 +183,9 @@ case "${fv3_res}" in
         export DELTIM=150
         export layout_x=8
         export layout_y=12
-        #JKHexport layout_x_gfs=12
-        export layout_x_gfs=16
-        export layout_y_gfs=16 
+        export layout_x_gfs=12
+        export layout_y_gfs=12 
+        #JKHexport layout_y_gfs=16 
         export nthreads_fv3=4
         #JKHexport nthreads_fv3_gfs=4
         export nthreads_fv3_gfs=2
@@ -196,7 +196,7 @@ case "${fv3_res}" in
         export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE=10
         #JKHexport WRITE_GROUP_GFS=4
         #JKHexport WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=20 #Note this should be 10 for WCOSS2
-        export WRITE_GROUP_GFS=2
+        export WRITE_GROUP_GFS=1
         export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=40 #Note this should be 10 for WCOSS2
         ;;
     "C1152")
@@ -276,7 +276,7 @@ export cplice=".false."
 export cplchm=".false."
 export cplwav=".false."
 export cplwav2atm=".false."
-export CCPP_SUITE="FV3_GFS_v17_p8_ugwpv1_c3_mynn"
+export CCPP_SUITE="FV3_GFS_v17_p8_ugwpv1"
 model_list="atm"
 
 # Mediator specific settings

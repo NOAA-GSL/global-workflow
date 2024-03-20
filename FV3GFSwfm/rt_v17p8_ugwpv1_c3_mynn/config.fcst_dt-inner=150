@@ -119,7 +119,7 @@ fi
 
 # PBL/turbulence schemes
 export hybedmf=".false."
-if [[ "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_c3_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_c3_mynn" ]] ; then
+if [[ "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_c3_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_c3_mynn" ]] ; then
    export satmedmf=".false."
    export isatmedmf=0
    export shal_cnv=".false."
@@ -211,26 +211,24 @@ case ${imp_physics} in
         export ncld=2
         export nwat=6
 
+        if [[ "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_c3_mynn" || 
+              "$CCPP_SUITE" == "FV3_GFS_v17_p8_ugwpv1_c3_mynn" || "$CCPP_SUITE" == "FV3_GFS_v17_p8_thompson" ]] ; then
+          export ltaerosol=".true."
+          export FIELD_TABLE="$HOMEgfs/parm/ufs/fv3/field_table_thompson_aero_tke${tbp}"
+        else
+          export ltaerosol=".false."
+          export FIELD_TABLE="${HOMEgfs}/parm/ufs/fv3/field_table_thompson_noaero_tke${tbp}"
+        fi
+
         export cal_pre=".false."
         export random_clds=".false."
         export effr_in=".true."
         export lradar=".true."
         export ttendlim="-999"
+        export dt_inner=$((DELTIM/2))
         export sedi_semi=.true.
+        if [[ "${sedi_semi}" == .true. ]]; then export dt_inner=${DELTIM} ; fi
         export decfl=10
-
-        if [[ "${CCPP_SUITE}" == "FV3_GFS_v17_p8_ugwpv1_mynn" || "${CCPP_SUITE}" == "FV3_GFS_v17_p8_ugwpv1_c3_mynn" || "${CCPP_SUITE}" == "FV3_GFS_v17_p8_mynn" || "${CCPP_SUITE}" == "FV3_GFS_v17_p8_c3_mynn" || 
-              "${CCPP_SUITE}" == "FV3_GFS_v17_p8_thompson" ]] ; then
-          #JKH  keep dt_inner $DELTIM/2 (75) if running aerosol-aware Thompson
-          export dt_inner=$((DELTIM/2))
-          export ltaerosol=".true."
-          export FIELD_TABLE="${HOMEgfs}/parm/ufs/fv3/field_table_thompson_aero_tke${tbp}"
-        else
-          export dt_inner=$((DELTIM/2))
-          if [[ "${sedi_semi}" == .true. ]]; then export dt_inner=${DELTIM} ; fi
-          export ltaerosol=".false."
-          export FIELD_TABLE="${HOMEgfs}/parm/ufs/fv3/field_table_thompson_noaero_tke${tbp}"
-        fi
 
         export hord_mt_nh_nonmono=5
         export hord_xx_nh_nonmono=5

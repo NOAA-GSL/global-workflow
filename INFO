@@ -1,0 +1,21 @@
+18Mar24
+=======
+update config.fcst to correct dt_inner to 75
+  effective 00Z 03/19
+
+09Mar24
+=======
+change from v17_p8_c3 to v17_p8_c3_mynn
+  effective 00Z 03/10
+
+29Jan24
+========
+rsync gsl_ufs_rtdev1 from /scratch1/BMC/gsd-fv3-dev/jhender/test/gsl_ufs_rtdev1 excluding .git* files
+  (git clone --recursive)
+
+  02Jan24 global-workflow
+  UFS: 21Dec23, 991d652
+  UPP:  07Nov23, 78f369b
+  
+  use submodules instead of checkout.sh
+  gfsatmos_products replaces gfspost tasks

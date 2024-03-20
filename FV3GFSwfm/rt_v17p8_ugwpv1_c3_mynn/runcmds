@@ -1,0 +1,15 @@
+rocotorun  -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/rt_v17p8_ugwpv1_c3_mynn.xml -d ${HOME}/rt_dbfiles/rt_v17p8_ugwpv1_c3_mynn.db
+rocotostat -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/rt_v17p8_ugwpv1_c3_mynn.xml -d ${HOME}/rt_dbfiles/rt_v17p8_ugwpv1_c3_mynn.db  -c `date --date='4 days ago' +%Y%m%d0000`: | m
+
+rocotorun  -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/v17p8_ugwpv1_c3_mynn.xml -d ${HOME}/retro_dbfiles/v17p8_ugwpv1_c3_mynn.db
+rocotostat   -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/v17p8_ugwpv1_c3_mynn.xml -d ${HOME}/retro_dbfiles/v17p8_ugwpv1_c3_mynn.db
+
+
+
+PyGraf workflow
+===============
+rocotorun -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/rt_pygraf_global_ugwpv1_c3_mynn.xml -d ${HOME}/rt_dbfiles/rt_pygraf_global_ugwpv1_c3_mynn.db
+rocotostat -w ${HOME}/UFS-CAMsuite_dev1/FV3GFSwfm/rt_v17p8_ugwpv1_c3_mynn/rt_pygraf_global_ugwpv1_c3_mynn.xml -d ${HOME}/rt_dbfiles/rt_pygraf_global_ugwpv1_c3_mynn.db -c  `date --date='4 days ago' +%Y%m%d0000`: | m
+
+rocotorun -w pygraf_global_ugwpv1_c3_mynn.xml -d pygraf_global_ugwpv1_c3_mynn.db
+rocotostat -w pygraf_global_ugwpv1_c3_mynn.xml -d pygraf_global_ugwpv1_c3_mynn.db

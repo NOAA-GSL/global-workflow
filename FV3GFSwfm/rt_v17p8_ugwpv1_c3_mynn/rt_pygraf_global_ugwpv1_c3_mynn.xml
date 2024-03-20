@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow
+[
+	<!-- Experiment parameters such as name, cycle, resolution -->
+	<!ENTITY PSLOT    "rt_v17p8_ugwpv1_c3_mynn">
+	<!ENTITY CDUMP    "gfs">
+	<!ENTITY CASE     "C768">
+	<!ENTITY COMPONENT "atmos">
+	<!ENTITY RES        "0p25">
+	<!ENTITY FCST_LENGTH "120">
+
+	<!-- Experiment parameters such as starting, ending dates -->
+	<!ENTITY SDATE    "202403100000">
+	<!ENTITY EDATE    "203401140000">
+	<!ENTITY INTERVAL "24:00:00">
+
+	<!-- Run Envrionment -->
+	<!ENTITY RUN_ENVIR "emc">
+
+	<!-- Directories for driving the workflow -->
+	<!ENTITY HOMEgfs  "/scratch1/BMC/gsd-fv3/rtruns/UFS-CAMsuite_dev1">
+	<!ENTITY JOBS_DIR "&HOMEgfs;/jobs/rocoto">
+
+	<!-- Experiment related directories -->
+	<!ENTITY EXPDIR "&HOMEgfs;/FV3GFSwfm/&PSLOT;">
+	<!ENTITY ROTDIR "&HOMEgfs;/FV3GFSrun/&PSLOT;">
+	<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/rtruns/pygraf">
+
+	<!-- Machine related entities -->
+	<!ENTITY ACCOUNT    "gsd-fv3">
+	<!ENTITY QUEUE      "batch">
+	<!ENTITY PARTITION_BATCH "hera">
+	<!ENTITY SCHEDULER  "slurm">
+
+	<!-- ROCOTO parameters that control workflow -->
+	<!ENTITY CYCLETHROTTLE "4">
+	<!ENTITY TASKTHROTTLE  "25">
+	<!ENTITY MAXTRIES      "2">
+
+	<!-- BEGIN: Resource requirements for the workflow -->
+
+	<!ENTITY QUEUE_PYTHON       "&QUEUE;">
+	<!ENTITY PARTITION_PYTHON   "&PARTITION_BATCH;">
+	<!ENTITY WALLTIME_PYTHON    "01:30:00">
+	<!ENTITY RESOURCES_PYTHON   "1:ppn=12:tpp=1">
+	<!ENTITY MEMORY_PYTHON      "40G">
+	<!ENTITY NATIVE_PYTHON      "--export=NONE">
+
+	<!-- END: Resource requirements for the workflow -->
+
+]>
+
+<workflow realtime="T" scheduler="&SCHEDULER;" cyclethrottle="&CYCLETHROTTLE;" taskthrottle="&TASKTHROTTLE;" >
+
+	<log verbosity="10"><cyclestr>&EXPDIR;/logs/@Y@m@d@H.log</cyclestr></log>
+
+	<!-- Define the cycles -->
+	<cycledef group="gfs">&SDATE; &EDATE; &INTERVAL;</cycledef>
+
+  <metatask name="remapgrib" throttle="58">
+
+    <var name="fcst"> 0 6 12 18 24 30 36 42 48 54 60 66 72 78 84 90 96 102 108 114 120 </var>
+    <var name="T"> 000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 </var>
+
+    <task name="remapgrib_#T#" cycledefs="gfs" maxtries="4">
+        <command>&JOBS_DIR;/remapgrib.ksh</command>
+        <account>&ACCOUNT;</account>
+        <cores>1</cores>
+        <walltime>00:35:00</walltime>
+        <jobname><cyclestr>remapgrib_#T#_&PSLOT;</cyclestr></jobname>
+        <join><cyclestr>&ROTDIR;/logs/@Y@m@d@H/remapgrib_#T#.log</cyclestr></join>
+        <envar><name>ROTDIR</name><value>&ROTDIR;</value></envar>
+        <envar><name>CDUMP</name><value>&CDUMP;</value></envar>
+        <envar><name>COMPONENT</name><value>&COMPONENT;</value></envar>
+        <envar><name>yyyymmdd</name><value><cyclestr>@Y@m@d</cyclestr></value></envar>
+        <envar><name>hh</name><value><cyclestr>@H</cyclestr></value></envar>
+        <envar><name>fcst</name><value>#T#</value></envar>
+        <envar><name>GRID_NAMES</name><value>201D130D242</value></envar>
+        <dependency>
+            <datadep minsize="1b" age="120"> <cyclestr>&ROTDIR;/&CDUMP;.@Y@m@d/@H/products/&COMPONENT;/grib2/0p25/&CDUMP;.t@Hz.pgrb2.&RES;.f#T#</cyclestr></datadep>
+        </dependency>
+    </task>
+
+  </metatask>
+
+  <metatask>
+
+    <var name="GRID_ID">full 242 130 201</var>
+    <var name="TILESET">full,Africa,Beijing,Cambodia,EPacific,Europe,Taiwan,WAtlantic,WPacific AK,AKZoom,AKZoom2 CONUS,NC,NE,NW,SC,SE,SW NHemi</var>
+    <var name="IMGFILE">global.yml globalAK.yml globalCONUS.yml globalNHemi.yml</var>
+
+    <task name="gfspygraf_#GRID_ID#" cycledefs="gfs" maxtries="&MAXTRIES;">
+  
+          <command>
+            <cyclestr>
+              source &PYGRAFDIR;/pre.sh;
+              cd &PYGRAFDIR;;
+              python &PYGRAFDIR;/create_graphics.py \
+                maps \
+                -d &ROTDIR;/&CDUMP;.@Y@m@d/@H/products/&COMPONENT;/grib2/0p25/post/#GRID_ID#\
+                -f 0 &FCST_LENGTH; 6 \
+                --file_type prs \
+                --file_tmpl "&CDUMP;.t@Hz.pgrb2.0p25.f{FCST_TIME:03d}"\
+                --images &PYGRAFDIR;/image_lists/#IMGFILE# hourly\
+                -m "GFSv17p8_UGWPV1_C3_MYNN" \
+                -n ${SLURM_CPUS_ON_NODE:-12} \
+                -o &ROTDIR;/&CDUMP;.@Y@m@d/@H/products/&COMPONENT;/pyprd \
+                -s @Y@m@d@H \
+                --tiles "#TILESET#" \
+                -z &ROTDIR;/&CDUMP;.@Y@m@d/@H/products/&COMPONENT;/img
+            </cyclestr>
+          </command>
+          <account>&ACCOUNT;</account>
+          <queue>&QUEUE;</queue>
+          <nodes>&RESOURCES_PYTHON;</nodes>
+          <walltime>&WALLTIME_PYTHON;</walltime>
+          <native>--exclusive</native>
+          <jobname><cyclestr>FV3GFS_python_maps_#GRID_ID#_@H_ugwpv1_c3_mynn</cyclestr></jobname>
+          <join><cyclestr>&ROTDIR;/logs/@Y@m@d@H/python_@Y@m@d@H00_maps_#GRID_ID#_0-6-&FCST_LENGTH;.log</cyclestr></join>
+  
+    <dependency>
+<!--        <or>
+          <timedep><cyclestr offset="030:00:00">@Y@m@d@H@M00</cyclestr></timedep>
+          <metataskdep metatask="remapgrib"/>
+        </or>
+-->
+          <metataskdep metatask="remapgrib"/>
+    </dependency>
+  
+    </task>
+
+  </metatask>
+
+</workflow>
