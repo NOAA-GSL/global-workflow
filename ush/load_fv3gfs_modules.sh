@@ -16,7 +16,8 @@ source "${HOMEgfs}/modulefiles/module-setup.sh.inc"
 source "${HOMEgfs}/versions/run.ver"
 
 # Load our modules:
-module use "${HOMEgfs}/modulefiles"
+#KYWmodule use "${HOMEgfs}/modulefiles"
+module use "/scratch1/BMC/gsd-fv3/rtruns/modulefiles/"
 
 if [[ -d /lfs/f1 ]]; then
   # We are on WCOSS2 (Cactus or Dogwood)

@@ -4,8 +4,8 @@
 #    236 201 244 130 224 242
 
 # initialize
-module load intel/2022.1.2
-module load wgrib2/2.0.8
+module load gnu/13.2.0 intel/2023.2.0 netcdf/4.7.0 wgrib2/3.1.2_ncep
+module list
 ECHO=echo
 MKDIR=mkdir
 LN=ln
@@ -20,6 +20,7 @@ echo "fcst        = ${fcst}"
 echo "GRID_NAMES  = ${GRID_NAMES}"
 echo
 
+echo `which wgrib2`
 #########################
 # Grid Definitions
 #########################

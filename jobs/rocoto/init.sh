@@ -21,8 +21,8 @@ status=$?
 [[ $status -ne 0 ]] && exit $status
 
 #JKH load ufs-utils modules
-module use /scratch1/BMC/gsd-fv3-dev/Judy.K.Henderson/test/gsl_ufs_dev/sorc/ufs_utils.fd/modulefiles
-module load build.hera.intel
+module use /scratch1/BMC/gsd-fv3/rtruns/modulefiles
+module load build.hera.gfsinit
 module list
 
 ###############################################################

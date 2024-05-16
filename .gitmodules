@@ -7,7 +7,7 @@
 	url = https://github.com/NOAA-EMC/wxflow
 [submodule "sorc/gfs_utils.fd"]
 	path = sorc/gfs_utils.fd
-	url = https://github.com/NOAA-EMC/gfs-utils
+	url = https://github.com/kayeekayee/gfs-utils
 [submodule "sorc/ufs_utils.fd"]
 	path = sorc/ufs_utils.fd
 	url = https://github.com/NOAA-GSL/UFS_UTILS.git
