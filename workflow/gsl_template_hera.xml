@@ -80,7 +80,7 @@
 	<account>gsd-fv3</account>
 	<queue>batch</queue>
 	<partition>hera</partition>
-	<walltime>05:00:00</walltime>
+	<walltime>06:00:00</walltime>
 <!--	<nodes>101:ppn=40:tpp=1</nodes> -->    <!-- 16x16, 2th, 2wg, 40wt -->
 	<nodes>56:ppn=40:tpp=1</nodes>         <!-- 12x12, 2th, 1wg, 40wt -->
         <native>&NATIVE_STR;</native>
