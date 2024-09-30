@@ -10,8 +10,8 @@
 	<!ENTITY FCST_LENGTH "120">
 
 	<!-- Experiment parameters such as starting, ending dates -->
-	<!ENTITY SDATE    "202403100000">
-	<!ENTITY EDATE    "203401140000">
+	<!ENTITY SDATE    "202406010000">
+	<!ENTITY EDATE    "203406010000">
 	<!ENTITY INTERVAL "24:00:00">
 
 	<!-- Run Envrionment -->
@@ -24,7 +24,8 @@
 	<!-- Experiment related directories -->
 	<!ENTITY EXPDIR "&HOMEgfs;/FV3GFSwfm/&PSLOT;">
 	<!ENTITY ROTDIR "&HOMEgfs;/FV3GFSrun/&PSLOT;">
-	<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/exp/pygraf">
+        <!--<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/exp/pygraf"> -->
+        <!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/rtruns/pygraf">
 
 	<!-- Machine related entities -->
 	<!ENTITY ACCOUNT    "gsd-fv3">
@@ -63,7 +64,7 @@
     <var name="T"> 000 006 012 018 024 030 036 042 048 054 060 066 072 078 084 090 096 102 108 114 120 </var>
 
     <task name="remapgrib_#T#" cycledefs="gfs" maxtries="4">
-        <command>&JOBS_DIR;/remapgrib.ksh</command>
+        <command>&JOBS_DIR;/remapgrib.sh</command>
         <account>&ACCOUNT;</account>
         <cores>1</cores>
         <walltime>00:35:00</walltime>

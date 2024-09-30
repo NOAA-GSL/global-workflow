@@ -28,7 +28,6 @@ datasets:
     {% filter indent(width=4) %}
 {% include "gfs_flux.yaml.j2" %}
 {% include "gfs_netcdfb.yaml.j2" %}
-#KYW{% include "gfs_pgrb2b.yaml.j2" %}
     {% endfilter %}
     {% if MODE == "cycled" %}
         # Archive Gaussian analysis data

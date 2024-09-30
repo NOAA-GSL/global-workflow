@@ -907,6 +907,11 @@ case ${step} in
     threads_per_task=1
     tasks_per_node=6
     memory="70GB"
+    wtime_init="00:30:00"
+    npe_init=24
+    nth_init=1
+    npe_node_init=6
+    memory_init="70G"
     ;;
 
   "init_chem")
