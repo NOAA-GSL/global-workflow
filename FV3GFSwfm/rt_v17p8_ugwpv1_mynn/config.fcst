@@ -137,7 +137,7 @@ export d2_bg_k2=0.04
 export dz_min=6
 export n_sponge=42
 
-# PBL/turbulance schemes
+# PBL/turbulence schemes
 export hybedmf=".false."
 if [[ "${CCPP_SUITE}" == "FV3_global_nest"* ]]; then
   export satmedmf=".false."

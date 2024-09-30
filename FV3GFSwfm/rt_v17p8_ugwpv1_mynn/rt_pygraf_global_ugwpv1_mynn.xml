@@ -10,8 +10,8 @@
 	<!ENTITY FCST_LENGTH "120">
 
 	<!-- Experiment parameters such as starting, ending dates -->
-	<!ENTITY SDATE    "202403290000">
-	<!ENTITY EDATE    "203403200000">
+	<!ENTITY SDATE    "202406010000">
+	<!ENTITY EDATE    "203406010000">
 	<!ENTITY INTERVAL "24:00:00">
 
 	<!-- Run Envrionment -->
@@ -24,7 +24,8 @@
 	<!-- Experiment related directories -->
 	<!ENTITY EXPDIR "&HOMEgfs;/FV3GFSwfm/&PSLOT;">
 	<!ENTITY ROTDIR "&HOMEgfs;/FV3GFSrun/&PSLOT;">
-	<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/exp/pygraf">
+	<!--<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/exp/pygraf"> -->
+	<!ENTITY PYGRAFDIR "/scratch1/BMC/gsd-fv3/rtruns/pygraf">
 
 	<!-- Machine related entities -->
 	<!ENTITY ACCOUNT    "gsd-fv3">
@@ -35,7 +36,7 @@
 	<!-- ROCOTO parameters that control workflow -->
 	<!ENTITY CYCLETHROTTLE "4">
 	<!ENTITY TASKTHROTTLE  "25">
-	<!ENTITY MAXTRIES      "2">
+	<!ENTITY MAXTRIES      "4">
 
 	<!-- BEGIN: Resource requirements for the workflow -->
 
@@ -132,3 +133,4 @@
   </metatask>
 
 </workflow>
+

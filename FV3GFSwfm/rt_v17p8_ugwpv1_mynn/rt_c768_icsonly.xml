@@ -117,6 +117,7 @@
 	<envar><name>ROTDIR</name><value>&ROTDIR;</value></envar>
 	<envar><name>PSLOT</name><value>&PSLOT;</value></envar>
 	<envar><name>COMPONENT</name><value>&COMPONENT;</value></envar>
+        <envar><name>DATAROOT</name><value>&ROTDIR;/../RUNDIRS/&PSLOT;</value></envar>
 
 	<dependency>
 		<and>
