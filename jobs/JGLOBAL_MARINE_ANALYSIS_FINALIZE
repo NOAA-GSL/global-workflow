@@ -1,5 +1,4 @@
 #!/bin/bash
-source "${HOMEgfs}/ush/preamble.sh"
 export WIPE_DATA="NO"
 export DATAjob="${DATAROOT}/${RUN}marineanalysis.${PDY:-}${cyc}"
 export DATAens="${DATAjob}/ensdata"
@@ -20,27 +19,34 @@ YMD=${PDY} HH=${cyc} declare_from_tmpl -rx COMIN_OBS:COM_OBS_TMPL
 YMD=${PDY} HH=${cyc} declare_from_tmpl -rx \
    COMOUT_OCEAN_ANALYSIS:COM_OCEAN_ANALYSIS_TMPL \
    COMOUT_ICE_ANALYSIS:COM_ICE_ANALYSIS_TMPL \
-   COMOUT_ICE_RESTART:COM_ICE_RESTART_TMPL
+   COMOUT_ICE_RESTART:COM_ICE_RESTART_TMPL \
+   COMOUT_CONF:COM_CONF_TMPL
 
-mkdir -p "${COMOUT_OCEAN_ANALYSIS}"
-mkdir -p "${COMOUT_ICE_ANALYSIS}"
-mkdir -p "${COMOUT_ICE_RESTART}"
+mkdir -m 775 -p  "${COMOUT_OCEAN_ANALYSIS}"
+mkdir -m 775 -p  "${COMOUT_ICE_ANALYSIS}"
+mkdir -m 775 -p  "${COMOUT_ICE_RESTART}"
+mkdir -m 775 -p  "${COMOUT_CONF}"
 
 ###############################################################
 # Run relevant script
 ###############################################################
 
 EXSCRIPT=${GDASMARINEANALYSIS:-${SCRgfs}/exglobal_marine_analysis_finalize.py}
-${EXSCRIPT}
-status=$?
-if [[ ${status} -ne 0 ]]; then
-    exit "${status}"
+${EXSCRIPT} && true
+export err=$?
+if [[ ${err} -ne 0 ]]; then
+    err_exit
 fi
 
 ##########################################
 # Remove the Temporary working directory
 ##########################################
-cd "${DATAROOT}" || exit 1
+cd "${DATAROOT}" && true
+export err=$?
+if [[ ${err} -ne 0 ]]; then
+    err_exit
+fi
+
 if [[ "${KEEPDATA}" == "NO" ]]; then
     rm -rf "${DATA}"
 fi

@@ -56,7 +56,7 @@ Click the blue box indicated by the red arrow to login.
 
 .. _pw-home:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_login_1.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_login_1_20250530.png
    :name: noaacsp_login_1
    :class: with-border
    :align: center
@@ -70,7 +70,7 @@ for access to other RDHPCS machines (e.g., Hera, Gaea).
 
 .. _login2:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_login_2.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_login_2_20250530.png
    :name: noaacsp_login_2
    :class: with-border
    :align: center
@@ -83,13 +83,12 @@ Configure the NOAA CSP Instance
 
 Once logged into the NOAA CSP, navigate to the ``Marketplace`` section
 in the left sidebar as indicated by the red arrow in :numref:`Figure %s <pw-marketplace>`, and click.
-Scroll down to select "AWS EPIC Wei CentOS", circled in red.
-Note that the current global-workflow is still using CentOS-built spack-stack,
-but it will be updated to Rocky 8 soon.
+Scroll down to select "AWS EPIC Wei c7i.24xlarge", circled in red.
+Note that the current global-workflow is now using Rocky8 spack-stack.
 
 .. _pw-marketplace:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_1.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_1_20250530.png
    :name: noaacsp_instance_1
    :class: with-border
    :align: center
@@ -100,7 +99,7 @@ Next, click "Fork latest" as shown in the red-circle in :numref:`Figure %s<fork-
 
 .. _fork-latest:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_2.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_2_20250530.png
    :name: noaacsp_instance_2
    :class: with-border
    :align: center
@@ -114,7 +113,7 @@ Click ``Fork`` (in the red-circle) to fork an instance.
 
 .. _create-fork:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_3.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_3_20250530.png
    :name: noaacsp_instance_3
    :class: with-border
    :align: center
@@ -133,7 +132,7 @@ Click *Save Changes* at the top-right as shown in the red circle.
 
 .. _config-cluster:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_4.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_instance_4_20250530.png
    :name: noaacsp_instance_4
    :class: with-border
    :align: center
@@ -236,7 +235,7 @@ Attach CSP Lustre Filesystem
 
 Now we need to attach the defined filesystem to our cluster.
 Go back to our the NOAA PW website (https://noaa.parallel.works), and click *Cluster*
-as shown in :numref:`Figure %s <select-cluster>` below, then select the cluster you made (e.g., ``AWS EPIC Wei CentOS example`` cluster, as shown in the red box below).
+as shown in :numref:`Figure %s <select-cluster>` below, then select the cluster you made (e.g., ``AWS EPIC WEI c7i.24xlarge`` cluster, as shown in the red box below).
 Note, one can remove/delete this cluster if no longer needed by
 clicking the trash can shown in the red circle at right.
 
@@ -308,7 +307,7 @@ the cluster varies and is not immediate; it may take several minutes (often 10-2
 
 .. _activate-cluster:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_using_1.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_using_1_20250530.png
    :name: noaacsp_using_1
    :class: with-border
    :align: center
@@ -333,7 +332,7 @@ because Rocoto uses `crontab`, which needs the cluster active all the time, or t
 
 .. _cluster-on:
 
-.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_using_2.png
+.. figure:: https://raw.githubusercontent.com/wiki/NOAA-EMC/global-workflow/images/noaacsp_using_2_20250530.png
    :name: noaacsp_using_2
    :class: with-border
    :align: center
@@ -342,7 +341,7 @@ because Rocoto uses `crontab`, which needs the cluster active all the time, or t
 
 After finishing your work on the AWS cluster, you should terminate/stop the cluster, unless you have reasons to keep it active.
 To stop/terminate the cluster, go to the cluster session, and click the green power button as show in :numref:`Figure %s <stop-cluster>`.
-A window will pop up; click the red *Turn Off* button to switch off the cluster. 
+A window will pop up; click the red *Turn Off* button to switch off the cluster.
 
 .. _stop-cluster:
 
@@ -366,14 +365,12 @@ or accessing the cluster from your web terminal, you can start to clone, compile
 
       cd /contrib/$USER   #you should have a username and have a directory at /contrib, where we save our permanent files.
       git clone --recursive git@github.com:NOAA-EMC/global-workflow.git global-workflow
-      #or the develop fork at EPIC:
-      git clone --recursive git@github.com:NOAA-EPIC/global-workflow-cloud.git global-workflow-cloud
 
 #. Compile global-workflow:
 
    .. code-block:: console
 
-      cd /contrib/$USER/global-workflow   # or cd /contrib/$USER/global-workflow-cloud depending on which one you cloned
+      cd /contrib/$USER/global-workflow
       cd sorc
       build_all.sh      # or similar command to compile for gefs, or others.
       link_workflow.sh  # after build_all.sh finished successfully
@@ -393,9 +390,9 @@ or accessing the cluster from your web terminal, you can start to clone, compile
       #SBATCH -o compile.%J.log
       #SBATCH --exclusive
 
-      gwhome=/contrib/Wei.Huang/src/global-workflow-cloud  # Change this to your own "global-workflow" source directory
+      gwhome=/contrib/Wei.Huang/src/global-workflow  # Change this to your own "global-workflow" source directory
       cd ${gwhome}/sorc
-      source ${gwhome}/workflow/gw_setup.sh
+      source ${gwhome}/dev/ush/gw_setup.sh
       #build_all.sh
       build_all.sh -w
       link_workflow.sh
@@ -417,4 +414,3 @@ EPIC has copied the C48 and C96 ATM, GEFS, and some other data to AWS, and the c
 If users want to run their own case, they need to make changes to the IC path and others to make it work.
 The execution of the global-workflow should now follow the same steps
 as those for the RDHPCS on-premises hosts.
-

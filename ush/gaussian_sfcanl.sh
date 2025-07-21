@@ -35,11 +35,8 @@
 #                   Defaults to $EXECgfs/gaussian_sfcanl.x
 #     INISCRIPT     Preprocessing script.  Defaults to none.
 #     LOGSCRIPT     Log posting script.  Defaults to none.
-#     ERRSCRIPT     Error processing script
-#                   defaults to 'eval [[ $err = 0 ]]'
 #     ENDSCRIPT     Postprocessing script
 #                   defaults to none
-#     CDATE         Output analysis date in yyyymmddhh format. Required.
 #     PGMOUT        Executable standard output
 #                   defaults to $pgmout, then to '&1'
 #     PGMERR        Executable standard error
@@ -68,7 +65,6 @@
 #   Modules and files referenced:
 #     scripts    : $INISCRIPT
 #                  $LOGSCRIPT
-#                  $ERRSCRIPT
 #                  $ENDSCRIPT
 #
 #     programs   : $GAUSFCANLEXE
@@ -100,8 +96,6 @@
 #
 ################################################################################
 
-source "${USHgfs}/preamble.sh"
-
 CASE=${CASE:-C768}
 res=$(echo $CASE | cut -c2-)
 LONB_CASE=$((res*4))
@@ -112,14 +106,11 @@ DONST=${DONST:-"NO"}
 LEVS=${LEVS:-64}
 LEVSP1=$(($LEVS+1))
 FIXWGTS=${FIXWGTS:-${FIXorog}/${CASE}/fv3_SCRIP_${CASE}_GRIDSPEC_lon${LONB_SFC}_lat${LATB_SFC}.gaussian.neareststod.nc}
-DATA=${DATA:-$(pwd)}
 
 #  Filenames.
 XC=${XC:-}
 GAUSFCANLEXE=${GAUSFCANLEXE:-$EXECgfs/gaussian_sfcanl.x}
 SIGLEVEL=${SIGLEVEL:-${FIXgfs}/am/global_hyblev.l${LEVSP1}.txt}
-
-CDATE=${CDATE:?}
 
 #  Other variables.
 export PGMOUT=${PGMOUT:-${pgmout:-'&1'}}
@@ -132,7 +123,6 @@ export REDERR=${REDERR:-'2>'}
 #  Preprocessing
 ${INISCRIPT:-}
 pwd=$(pwd)
-cd "${DATA}" || exit 99
 if [[ ! -d "${COMOUT_ATMOS_ANALYSIS}" ]]; then
    mkdir -p "${COMOUT_ATMOS_ANALYSIS}"
 fi
@@ -190,14 +180,16 @@ cat <<EOF > fort.41
  /
 EOF
 
-$APRUNSFC $GAUSFCANLEXE
+${APRUNSFC} "${GAUSFCANLEXE}"
 
-export ERR=$?
-export err=$ERR
-$ERRSCRIPT||exit 2
+export err=$?
+if [[ ${err} -ne 0 ]]; then
+   echo "FATAL ERROR: ${GAUSFCANLEXE} returned non-zero exit status!"
+   exit "${err}"
+fi
 
 ################################################################################
 #  Postprocessing
-cd $pwd
+cd "${pwd}"
 
-exit ${err}
+exit 0

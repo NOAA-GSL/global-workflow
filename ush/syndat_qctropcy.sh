@@ -63,8 +63,6 @@
 #                (Default: not set)
 #   TIMEIT   - optional time and resource reporting (Default: not set)
 
-source "${USHgfs}/preamble.sh"
-
 ARCHSYND=${ARCHSYND:-$COMROOTp3/gfs/prod/syndat}
 HOMENHC=${HOMENHC:-/gpfs/dell2/nhc/save/guidance/storm-data/ncep}
 TANK_TROPCY=${TANK_TROPCY:-${DCOMROOT}/us007003}
@@ -100,31 +98,31 @@ positional parameter 1"
    set_trace
    echo $msg >> $pgmout
 
-# Copy null files into "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.$tmmark" and
-#  "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.$tmmark" so later ftp attempts will find and
+# Copy null files into "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.$tmmark" and
+#  "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.$tmmark" so later ftp attempts will find and
 #  copy the zero-length file and avoid wasting time with multiple attempts
 #  to remote machine(s)
 #  (Note: Only do so if files don't already exist)
 
-   if [[ ! -s "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}" ]]; then
-       cp "/dev/null" "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
+   if [[ ! -s "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}" ]]; then
+       cp "/dev/null" "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
    fi
-   if [[ ! -s "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}" ]]; then
-       cp "/dev/null" "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
+   if [[ ! -s "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}" ]]; then
+       cp "/dev/null" "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
    fi
 
    exit
 fi
 
-CDATE10=$1
+run_date=$1
 
 set +x
 echo
-echo "Run date is $CDATE10"
+echo "Run date is ${run_date}"
 echo
 set_trace
 
-year=$(echo $CDATE10 | cut -c1-4)
+year=${run_date:0:4}
 
  
 #  Copy the seasonal statistics from archive directory to local
@@ -213,14 +211,14 @@ ${USHgfs}/parse-storm-type.pl nhc1 > nhc
 cp -p nhc nhc.ORIG
 # JTWC/FNOC ... execute syndat_getjtbul script to write into working directory
 #               as fnoc; copy to archive
-${USHgfs}/syndat_getjtbul.sh $CDATE10
+${USHgfs}/syndat_getjtbul.sh ${run_date}
 touch fnoc
 [ "$copy_back" = 'YES' ]  &&  cat fnoc >> $ARCHSYND/syndat_tcvitals.$year
 
 mv -f fnoc fnoc1
 ${USHgfs}/parse-storm-type.pl fnoc1 > fnoc
 
-if [ $SENDDBN = YES ]; then
+if [[ "${SENDDBN}" == "YES" ]]; then
   $DBNROOT/bin/dbn_alert MODEL SYNDAT_TCVITALS $job $ARCHSYND/syndat_tcvitals.$year
 fi
 
@@ -236,16 +234,16 @@ pgm=$(basename ${EXECgfs}/syndat_qctropcy.x)
 export pgm
 if [ -s prep_step ]; then
    set +u
-   . prep_step
+   source prep_step
    set -u
 else
    [ -f errfile ] && rm errfile
    unset FORT00 $(env | grep "^FORT[0-9]\{1,\}=" | awk -F= '{print $1}')
 fi
 
-echo "$CDATE10"      > cdate10.dat
+echo "${run_date}"      > run_date.dat
 export FORT11=slmask.126
-export FORT12=cdate10.dat
+export FORT12=run_date.dat
 ${EXECgfs}/${pgm} >> $pgmout 2> errfile
 errqct=$?
 ###cat errfile
@@ -273,16 +271,16 @@ if [ "$errqct" -gt '0' ];then
    echo $msg >> $pgmout
 
 # In the event of a ERROR in PROGRAM SYNDAT_QCTROPCY, copy null files into
-#  "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.$tmmark" and "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.$tmmark"
+#  "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.$tmmark" and "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.$tmmark"
 #  so later ftp attempts will find and copy the zero-length file and avoid
 #  wasting time with multiple attempts to remote machine(s)
 #  (Note: Only do so if files don't already exist)
 
-   if [[ ! -s "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}" ]]; then
-       cp "/dev/null" "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
+   if [[ ! -s "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}" ]]; then
+       cp "/dev/null" "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
    fi
-   if [[ ! -s ${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark} ]]; then
-       cp "/dev/null" "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
+   if [[ ! -s ${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark} ]]; then
+       cp "/dev/null" "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
    fi
 
    exit
@@ -356,15 +354,14 @@ fi
 
 
 #  This is the file that connects to the later RELOCATE and/or PREP scripts
-cp current "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
+cp current "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
 
 #  Create the DBNet alert 
-if [ $SENDDBN = "YES" ]
-then
-   "${DBNROOT}/bin/dbn_alert" "MODEL" "GDAS_TCVITALS" "${job}" "${COM_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
+if [[ "${SENDDBN}" == "YES" ]]; then
+   "${DBNROOT}/bin/dbn_alert" "MODEL" "GDAS_TCVITALS" "${job}" "${COMOUT_OBS}/${RUN}.${cycle}.syndata.tcvitals.${tmmark}"
 fi
     
 #  Write JTWC/FNOC Tcvitals to /com path since not saved anywhere else
-cp fnoc "${COM_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
+cp fnoc "${COMOUT_OBS}/${RUN}.${cycle}.jtwc-fnoc.tcvitals.${tmmark}"
 
 exit

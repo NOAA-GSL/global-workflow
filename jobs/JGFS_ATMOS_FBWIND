@@ -5,13 +5,8 @@
 ############################################
 # GFS FBWIND PRODUCT GENERATION
 ############################################
-source "${HOMEgfs}/ush/preamble.sh"
 source "${HOMEgfs}/ush/jjob_header.sh" -e "fbwind" -c "base fbwind"
 
-###################################
-# Specify NET and RUN Name and model
-####################################
-export model=${model:-gfs}
 export COMPONENT="atmos"
 
 ##############################################
@@ -24,14 +19,13 @@ if [[ ! -d "${COMOUT}" ]]; then
   mkdir -m 775 -p "${COMOUT}"
 fi
 
-export SENDDBN=${SENDDBN:-NO}
-export DBNROOT=${DBNROOT:-${UTILROOT}/fakedbn}
-
-
 ########################################################
 # Execute the script.
-"${SCRgfs}/exgfs_atmos_fbwind.sh"
-export err=$?;err_chk
+"${SCRgfs}/exgfs_atmos_fbwind.sh" && true
+export err=$?
+if [[ ${err} -ne 0 ]]; then
+  err_exit
+fi
 ########################################################
 
 ############################################

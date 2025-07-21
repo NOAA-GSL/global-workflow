@@ -3,7 +3,6 @@
 # Ignore possible spelling error (nothing is misspelled)
 # shellcheck disable=SC2153
 
-source "${HOMEgfs}/ush/preamble.sh"
 source "${HOMEgfs}/ush/jjob_header.sh" -e "ecen_fv3jedi" -c "base ecen_fv3jedi"
 
 ##############################################
@@ -21,26 +20,27 @@ GDUMP_ENS="enkfgdas"
 ##############################################
 
 # Generate COM variables from templates
-YMD=${PDY} HH=${cyc} RUN=${GDUMP} declare_from_tmpl -rx \
-   COMIN_ATMOS_ANALYSIS:COM_ATMOS_ANALYSIS_TMPL
-YMD=${PDY} HH=${cyc} RUN=${GDUMP} declare_from_tmpl -rx \
+RUN=${GDUMP} YMD=${PDY} HH=${cyc} declare_from_tmpl -rx \
+   COMIN_ATMOS_ANALYSIS:COM_ATMOS_ANALYSIS_TMPL \
    COMOUT_ATMOS_ANALYSIS:COM_ATMOS_ANALYSIS_TMPL
 MEMDIR='ensstat' RUN=${GDUMP_ENS} YMD=${PDY} HH=${cyc} declare_from_tmpl -rx \
-   COMIN_ATMOS_ANALYSIS_ENSSTAT:COM_ATMOS_ANALYSIS_TMPL
-MEMDIR='ensstat' RUN=${GDUMP_ENS} YMD=${PDY} HH=${cyc} declare_from_tmpl -rx \
-   COMOUT_ATMOS_ANALYSIS_ENSSTAT:COM_ATMOS_ANALYSIS_TMPL
+   COMIN_ATMOS_ANALYSIS_ENSSTAT:COM_ATMOS_ANALYSIS_TMPL \
+   COMOUT_ATMOS_ANALYSIS_ENSSTAT:COM_ATMOS_ANALYSIS_TMPL \
+   COMOUT_CONF:COM_CONF_TMPL  
 RUN=${GDUMP} YMD=${gPDY} HH=${gcyc} declare_from_tmpl -rx \
    COMIN_ATMOS_HISTORY_PREV:COM_ATMOS_HISTORY_TMPL
+
+mkdir -m 755 -p "${COMOUT_CONF}"
 
 ##############################################
 # Run relevant script
 ##############################################
 
 EXSCRIPT=${GDASATMRUNPY:-${SCRgfs}/exgdas_enkf_ecen_fv3jedi.py}
-${EXSCRIPT}
-status=$?
-if [[ ${status} -ne 0 ]]; then
-  exit "${status}"
+${EXSCRIPT} && true
+export err=$?
+if [[ ${err} -ne 0 ]]; then
+    err_exit
 fi
 
 ##############################################
@@ -59,8 +59,14 @@ fi
 # Remove the Temporary working directory
 ##############################################
 
-cd "${DATAROOT}" || ( echo "FATAL ERROR: ${DATAROOT} does not exist, ABORT!"; exit 1 )
-if [[ ${KEEPDATA} = "NO" ]]; then
+cd "${DATAROOT}" && true
+export err=$?
+set +x
+if [[ ${err} -ne 0 ]]; then
+    err_exit "${DATAROOT} does not exist, ABORT!"
+fi
+set_trace
+if [[ "${KEEPDATA}" == "NO" ]]; then
     rm -rf "${DATA}"
 fi
 

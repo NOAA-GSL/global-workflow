@@ -9,12 +9,16 @@ prepend_path("MODULEPATH", "/ncrc/proj/epic/spack-stack/c6/spack-stack-1.6.0/env
 
 local stack_intel_ver=os.getenv("stack_intel_ver") or "2023.2.0"
 local python_ver=os.getenv("python_ver") or "3.10.13"
+local cmake_ver=os.getenv("cmake_ver") or "3.27.9"
 
+load(pathJoin("cmake", cmake_ver))
 load(pathJoin("stack-intel", stack_intel_ver))
 load(pathJoin("python", python_ver))
 load("py-jinja2")
 load("py-pyyaml")
 load("py-numpy")
 load("git-lfs")
+
+unload("cray-libsci")
 
 whatis("Description: GFS run setup environment")

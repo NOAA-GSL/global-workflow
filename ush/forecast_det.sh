@@ -8,7 +8,7 @@ UFS_det(){
   # Determine if the current cycle is a warm start (based on the availability of restarts)
   if [[ -f "${COMIN_ATMOS_RESTART_PREV}/${model_start_date_current_cycle:0:8}.${model_start_date_current_cycle:8:2}0000.coupler.res" ]]; then
     warm_start=".true."
-  fi 
+  fi
 
   # If restarts were not available, this is likely a cold start
   if [[ "${warm_start}" == ".false." ]]; then
@@ -25,6 +25,8 @@ UFS_det(){
     DOIAU="NO"
     IAU_OFFSET=0
     model_start_date_current_cycle=${current_cycle}
+
+    DO_LAND_IAU=".false."           
 
     # It is still possible that a restart is available from a previous forecast attempt
     # So we have to continue checking for restarts
@@ -98,7 +100,7 @@ UFS_det(){
 
     # Check for WW3 restart availability
     if [[ "${cplwav}" == ".true." ]]; then
-      if [[ ! -f "${DATArestart}/WW3_RESTART/${rdate:0:8}.${rdate:8:2}0000.restart.ww3" ]]; then
+      if [[ ! -f "${DATArestart}/WW3_RESTART/${rdate:0:8}.${rdate:8:2}0000.restart.ww3.nc" ]]; then
         ww3_rst_ok="NO"
       fi
     fi
@@ -111,6 +113,13 @@ UFS_det(){
       && [[ "${ww3_rst_ok}" == "YES" ]]; then
       RERUN="YES"
       RERUN_DATE="${rdate}"
+
+      # Check if RERUN_DATE is at/after model end time; if so, this will cause the model to crash
+      if [[ ${RERUN_DATE} -ge ${forecast_end_cycle} ]]; then
+         echo "FATAL ERROR Warm start detected, but restart date (${RERUN_DATE}) is at/after model end date (${forecast_end_cycle})"
+         exit 1
+      fi
+
       warm_start=".true."
       echo "All restarts found for '${RERUN_DATE}', RERUN='${RERUN}', warm_start='${warm_start}'"
       break
