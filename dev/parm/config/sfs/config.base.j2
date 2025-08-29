@@ -164,7 +164,7 @@ case "${CASE}" in
         export waveGRD='glo_025'
         ;;
     "C768" | "C1152")
-           export waveGRD='mx025'
+        export waveGRD='mx025'
         ;;
     *)
         echo "FATAL ERROR: Unrecognized CASE ${CASE}, ABORT!"
@@ -311,18 +311,16 @@ if [[ "${EXP_WARM_START}" = ".true." ]]; then
   fi
 fi
 
+#Soil DA. Stage ic and archive tasks look for these configs
+export DO_GSISOILDA="NO"
+export DO_LAND_IAU=".false."
+
 # turned on nsst in anal and/or fcst steps, and turn off rtgsst
 export DONST="YES"
 if [[ ${DONST} = "YES" ]]; then export FNTSFA="        "; fi
 
 # The switch to apply SST elevation correction or not
 export nst_anl=.true.
-
-# Make the nsstbufr file on the fly or use the GDA version
-export MAKE_NSSTBUFR="{{ MAKE_NSSTBUFR }}"
-
-# Make the aircraft prepbufr file on the fly or use the GDA version
-export MAKE_ACFTBUFR="{{ MAKE_ACFTBUFR }}"
 
 # Verification options
 export DO_METP="NO"         # Run METPLUS jobs - set METPLUS settings in config.metp
